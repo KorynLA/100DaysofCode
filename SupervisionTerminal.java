@@ -1,5 +1,6 @@
 /***
 Advent of code day 5
+Had issue with the opcodes. Didn't reset them after every loop.
 ***/
 import java.util.*;
 import java.math.*;
@@ -12,13 +13,13 @@ public class SupervisionTerminal {
 		ArrayList<Integer> rocketCodes = new ArrayList<Integer>();
 		uploadRocketData(rocketCodes);
 		int i=0;
-		String opcode="";
 		//default values for opcodes is 0
-		int dE=0;
-		int a=0;
-		int b=0;
-		int c=0;
 		while( i < rocketCodes.size()) {
+			String opcode="";
+			int dE=0;
+			int a=0;
+			int b=0;
+			int c=0;
 			/***
 			need to reparse the opcodes --- 
 			ABCDE 1002
@@ -79,14 +80,16 @@ public class SupervisionTerminal {
 		System.out.print("Enter diagnostic code: ");
 		int num = input.nextInt();
 		System.out.println("Thanks!");
-		int loc1=mode(rocketCode, index+1, c);
-		rocketCode.set(loc1, num);
+		int setVal = rocketCode.get(index+1);
+		//int loc1=mode(rocketCode, index+1, c);
+		//System.out.println(rocketCode.get(index+1)+ " "+rocketCode.get(rocketCode.get(index+1))+" "+ num);
+		rocketCode.set(setVal, num);
 	}
 	
 	//UPDATE: Day 5 add opcode 4
 	public static void opcode4Output(ArrayList<Integer> rocketCode, int index, int a, int b, int c) {
 		int val=index+1;
-		System.out.println(rocketCode.get(val));
+		System.out.println(rocketCode.get(rocketCode.get((val))));
 	}
 	
 	/***
@@ -96,7 +99,7 @@ public class SupervisionTerminal {
 	public static void opcode1Add(ArrayList<Integer> rocketCode, int index, int a, int b, int c) {
 		int loc1=mode(rocketCode, index+1, c);
 		int loc2=mode(rocketCode, index+2, b);
-		int loc3=mode(rocketCode, index+3, a);
+		int loc3=rocketCode.get(index+3);
 		int sum=0;
 		sum=rocketCode.get(loc1)+rocketCode.get(loc2);
 		rocketCode.set(loc3, sum);
@@ -109,7 +112,7 @@ public class SupervisionTerminal {
 	public static void opcode2Multiply(ArrayList<Integer> rocketCode, int index, int a, int b, int c) {
 		int loc1=mode(rocketCode, index+1, c);
 		int loc2=mode(rocketCode, index+2, b);
-		int loc3=mode(rocketCode, index+3, a);
+		int loc3=rocketCode.get(index+3);
 		int multiply=0;
 		multiply=rocketCode.get(loc1)*rocketCode.get(loc2); 
 		rocketCode.set(loc3, multiply);

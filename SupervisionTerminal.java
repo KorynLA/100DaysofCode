@@ -19,7 +19,6 @@ public class SupervisionTerminal {
 		int b=0;
 		int c=0;
 		while( i < rocketCodes.size()) {
-			System.out.println(i);
 			/***
 			need to reparse the opcodes --- 
 			ABCDE 1002
@@ -31,30 +30,28 @@ public class SupervisionTerminal {
             opcode=Integer.toString(rocketCodes.get(i));
             if(opcode.length() > 1) { dE=Integer.parseInt(opcode.charAt(opcode.length()-2)+""+opcode.charAt(opcode.length()-1)); }
             else { dE=Integer.parseInt(opcode); }
-            if(opcode.length() > 2) { c=Character.getNumericValue(opcode.charAt(opcode.length()-3)); 
-            	System.out.println(opcode.charAt(opcode.length()-3)); }
+            if(opcode.length() > 2) { c=Character.getNumericValue(opcode.charAt(opcode.length()-3)); }
             if(opcode.length() > 3) { b=Character.getNumericValue(opcode.charAt(opcode.length()-4)); }
             if(opcode.length() > 4) { a=Character.getNumericValue(opcode.charAt(opcode.length()-5)); }
-            	System.out.println("dE" +dE);
 			//get first value if 1, add
 			if(dE== 1) {
-				opcode1Add(rocketCodes, i, b);
-				i+=4;
+				opcode1Add(rocketCodes, i, a, b, c);
+				i+=4; 
 			}
 			//if 2, multiply
 			else if(dE == 2) {
-				opcode2Multiply(rocketCodes, i, b);
-				i+=4;
+				opcode2Multiply(rocketCodes, i, a, b, c);
+				i+=4; 
 			}
 			//UPDATE: adding 2 new instructions for Day 5
 			else if (dE == 3) {
 				//takes integer as input and saves it to position given by integer
-				opcode3Save(rocketCodes, i, b);
+				opcode3Save(rocketCodes, i, a, b, c);
 				i+=2;
 			}
 			else if (dE == 4) {
 				//outputs value at the address
-				opcode4Output(rocketCodes, i, b);
+				opcode4Output(rocketCodes, i, a, b, c);
 				i+=2;
 			}
 			//if 99 halt (return)
@@ -64,32 +61,31 @@ public class SupervisionTerminal {
 			}
 			//Error unknown
 			else {
-				System.out.println("Something went wrong");
+				System.out.println("Something went wrong opcode: " + opcode);
 				break;
 			}
 		}
-		System.out.println(rocketCodes);
 	}
-	
+	//UPDATE: adding to determine the mode via the opcode given
+	public static int mode(ArrayList<Integer> rocketCode, int index, int parameterMode) {
+		if(parameterMode == 1) { return index; }
+		else{ return rocketCode.get(index); }
+	}
 	//UPDATE: Day 5 add opcode 3
-	public static void opcode3Save(ArrayList<Integer> rocketCode, int index, int b) {
+	public static void opcode3Save(ArrayList<Integer> rocketCode, int index, int a, int b, int c) {
 		//input is 1 for now
 		//mde 1 immediate mode parameter is simply itself 
 		Scanner input = new Scanner(System.in);
 		System.out.print("Enter diagnostic code: ");
 		int num = input.nextInt();
 		System.out.println("Thanks!");
-		int loc1=0;
-		if(b == 1) { loc1=index+1; }
-		else{ loc1=rocketCode.get(index+1); }
+		int loc1=mode(rocketCode, index+1, c);
 		rocketCode.set(loc1, num);
 	}
 	
 	//UPDATE: Day 5 add opcode 4
-	public static void opcode4Output(ArrayList<Integer> rocketCode, int index, int b) {
-		int val=0;
-		if(b == 1) { val=index+1; }
-		else { val=rocketCode.get(index+1); }
+	public static void opcode4Output(ArrayList<Integer> rocketCode, int index, int a, int b, int c) {
+		int val=index+1;
 		System.out.println(rocketCode.get(val));
 	}
 	
@@ -97,13 +93,12 @@ public class SupervisionTerminal {
 	Performs addition of values at the index+1 and index+2, updates the ArrayList at the location provided in
 	index+3 with the sum found
 	***/
-	public static void opcode1Add(ArrayList<Integer> rocketCode, int index, int b) {
-		int loc1=rocketCode.get(index+1);
-		int loc2=rocketCode.get(index+2);
-		int loc3=rocketCode.get(index+3);
+	public static void opcode1Add(ArrayList<Integer> rocketCode, int index, int a, int b, int c) {
+		int loc1=mode(rocketCode, index+1, c);
+		int loc2=mode(rocketCode, index+2, b);
+		int loc3=mode(rocketCode, index+3, a);
 		int sum=0;
-		if(b == 1) { sum=rocketCode.get(loc1)+loc2; }
-		else { sum=rocketCode.get(loc1)+rocketCode.get(loc2); }
+		sum=rocketCode.get(loc1)+rocketCode.get(loc2);
 		rocketCode.set(loc3, sum);
 	}
 	
@@ -111,15 +106,12 @@ public class SupervisionTerminal {
 	Performs multiplication of values at the index+1 and index+2, updates the ArrayList at the location provided in
 	index+3 with the product found
 	***/
-	public static void opcode2Multiply(ArrayList<Integer> rocketCode, int index, int b) {
-		System.out.println(rocketCode);
-		int loc1=rocketCode.get(index+1);
-		int loc2=rocketCode.get(index+2);
-		int loc3=rocketCode.get(index+3);
+	public static void opcode2Multiply(ArrayList<Integer> rocketCode, int index, int a, int b, int c) {
+		int loc1=mode(rocketCode, index+1, c);
+		int loc2=mode(rocketCode, index+2, b);
+		int loc3=mode(rocketCode, index+3, a);
 		int multiply=0;
-		//mde 1 immediate mode parameter is simply itself 
-		if(b == 1) { multiply=rocketCode.get(loc1)*loc2; }
-		else { multiply=rocketCode.get(loc1)*rocketCode.get(loc2); }
+		multiply=rocketCode.get(loc1)*rocketCode.get(loc2); 
 		rocketCode.set(loc3, multiply);
 	}	
 	

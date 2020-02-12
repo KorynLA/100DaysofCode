@@ -13,7 +13,6 @@ public class SupervisionTerminal {
 		ArrayList<Integer> rocketCodes = new ArrayList<Integer>();
 		uploadRocketData(rocketCodes);
 		int i=0;
-		//default values for opcodes is 0
 		while( i < rocketCodes.size()) {
 			String opcode="";
 			int dE=0;
@@ -34,6 +33,8 @@ public class SupervisionTerminal {
             if(opcode.length() > 2) { c=Character.getNumericValue(opcode.charAt(opcode.length()-3)); }
             if(opcode.length() > 3) { b=Character.getNumericValue(opcode.charAt(opcode.length()-4)); }
             if(opcode.length() > 4) { a=Character.getNumericValue(opcode.charAt(opcode.length()-5)); }
+			System.out.println(dE + " "+ c + " "+ b+ " "+ a);
+			//parameter modes
 			//get first value if 1, add
 			if(dE== 1) {
 				opcode1Add(rocketCodes, i, a, b, c);
@@ -61,8 +62,48 @@ public class SupervisionTerminal {
 				break;
 			}
 			//Error unknown
+			else if (dE == 5){
+				if(rocketCodes.get(mode(rocketCodes, i+1, c)) != 0) { 
+					i=rocketCodes.get(mode(rocketCodes, i+2, b));
+					//i=0;
+				}
+				else {
+					i+=3;
+				}
+				System.out.println("5 Jump-if-true ");
+			}
+			else if(dE == 6) {
+				if(rocketCodes.get(mode(rocketCodes, i+1, c)) == 0) {
+					i=rocketCodes.get(mode(rocketCodes, i+2, b));
+					//i=0;
+				}
+				else {
+					i+=3;
+				}
+				System.out.println("6 Jump-if-false ");
+			}
+			else if(dE == 7){
+				if(rocketCodes.get(mode(rocketCodes, i+1, c)) < rocketCodes.get(mode(rocketCodes, i+2, b))) { 
+					rocketCodes.set(rocketCodes.get(i+3), 1);
+				}
+				else {
+					rocketCodes.set(rocketCodes.get(i+3), 0);
+				}
+				i+=4;
+				System.out.println("7 less than");
+			}
+			else if(dE == 8){
+				if (rocketCodes.get(mode(rocketCodes, i+1, c)) == rocketCodes.get(mode(rocketCodes, i+2, b))){
+					rocketCodes.set(rocketCodes.get(i+3), 1);
+				}
+				else {
+					rocketCodes.set(rocketCodes.get(i+3), 0);
+				}
+				i+=4;
+				System.out.println("8 equals ");
+			}
 			else {
-				System.out.println("Something went wrong opcode: " + opcode);
+				System.out.println("Something went wrong!");
 				break;
 			}
 		}
